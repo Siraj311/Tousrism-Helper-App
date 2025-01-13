@@ -1,19 +1,18 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React from 'react'
+import { useRouter } from 'expo-router'
 
 const index = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Text style={styles.headerTxt}>Tourism Helper Guide</Text>
-      </View> */}
-
       <View style={styles.subHeader}>
-        <Text>Weather Selector</Text>
+        <Text style={styles.subHeaderTxt}>Weather Selector</Text>
       </View>
 
       <View style={styles.weatherContainer}>
-        <TouchableOpacity style={styles.weatherCard}>
+        <TouchableOpacity style={styles.weatherCard} onPress={() => router.push({pathname: './Options'})}>
           <Image source={require('../assets/images/weatherDay/SunnyDay.jpg')} style={styles.weatherImage}/>
           <Text style={styles.cardTxt}>Sunny Day</Text>
         </TouchableOpacity>
@@ -38,15 +37,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#68dbf2'
   },
   header: {
     marginTop: 50,
     paddingVertical: 10
   },
   headerTxt: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '600'
+  },
+  subHeader: {
+    paddingVertical: 10
+  },
+  subHeaderTxt: {
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'center'
   },
   weatherContainer: {
     flex: 1,

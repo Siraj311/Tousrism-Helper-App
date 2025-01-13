@@ -32,7 +32,16 @@ export default function RootLayout() {
       <Stack screenOptions={{
         headerShadowVisible: false,
       }}>
-        <Stack.Screen name="index" options={{ headerTitle: 'Tourism Helper Guide' }} />
+        <Stack.Screen name="index" options={{ headerTitle: 'Tourism Helper Guide',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontWeight: '600',
+        }, }} />
+        <Stack.Screen name="Options" options={{ headerTitle: 'Tourism Helper Guide',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontWeight: '600',
+        }, }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
