@@ -1,40 +1,34 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React from 'react'
 import {Colors} from '../constants/Colors';
-import { useRouter } from 'expo-router';
 
-const Options = () => {
-  const router = useRouter();
-
+const Places = () => {
   const optionCards = [
-    {id: '1', name: 'Sports', source: require('../assets/images/options/sports.png')},
-    {id: '2', name: 'Movie Watching', source: require('../assets/images/options/movie.png')},
-    {id: '3', name: 'Music', source: require('../assets/images/options/music.png')},
-    {id: '4', name: 'Realxing', source: require('../assets/images/options/relax.png')},
-    {id: '5', name: 'Gaming', source: require('../assets/images/options/gaming.png')},
-    {id: '6', name: 'Other', source: require('../assets/images/options/other.png')},
+    {id: '1', name: 'Cricket', state: 'OPEN', source: require('../assets/images/optionTypes/sports/cricket.png')},
+    {id: '2', name: 'Football', state: 'CLOSE', source: require('../assets/images/optionTypes/sports/football.png')},
+    {id: '3', name: 'Badminton', state: 'OPEN', source: require('../assets/images/optionTypes/sports/badminton.png')},
+    {id: '4', name: 'Basketball', state: 'CLOSE', source: require('../assets/images/optionTypes/sports/basketball.png')},
+    {id: '5', name: 'Carrom', state: 'OPEN', source: require('../assets/images/optionTypes/sports/carrom.png')},
+    {id: '6', name: 'Chess', state: 'OPEN', source: require('../assets/images/optionTypes/sports/chess.png')},
   ];
-
-  const handlePress = (name) => {
-    router.push('/OptionTypes')
-  }
 
   return (
     <View style={styles.container}>
       <View style={styles.subHeading}>
-        <Text style={styles.subHeadingTxt}>Options to proceed</Text>
+        <Text style={styles.subHeadingTxt}>Places to Visit</Text>
       </View>
-      
+
       <View style={{flex: 1}}>
         <FlatList data={optionCards}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({item}) => (
-          <TouchableOpacity style={styles.optionCard} onPress={() => handlePress(item.name)}>
+          <TouchableOpacity style={styles.card}>
             <View style={styles.imageContainer}>
               <Image source={item.source} style={styles.image}/>
             </View>
             <View style={styles.cardTitle}>
               <Text style={styles.cardTitleTxt}>{item.name}</Text>
+              <Text style={[styles.cardState, {color: item.state == 'OPEN' ? 'green' : 'red'}]}>{item.state}</Text>
             </View>
           </TouchableOpacity>
         )}/>
@@ -43,13 +37,12 @@ const Options = () => {
   )
 }
 
-export default Options
+export default Places
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#EAEDF1'
-    backgroundColor: '#fff'
+    backgroundColor: '#FFFFFF'
   },
   subHeading: {
     // backgroundColor: 'green',
@@ -59,23 +52,32 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
   },
-  optionCard: {
+  card: {
     flexDirection: 'row',
     height: 100,
     marginHorizontal: 20,
     marginVertical: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fff',
     borderRadius: 10,
-    elevation: 5
+    elevation: 5,
   },
   cardTitle: {
+    flexDirection: 'row',
     flex: 1,
-    justifyContent: 'center'
+    paddingLeft: 25,
+    paddingRight: 15,
+    // backgroundColor: 'green',
+    // flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // flexDirection: 'row'
+  },
+  cardState: {
+    fontWeight:"bold"
   },
   cardTitleTxt: {
     fontSize: 21,
     fontWeight: 'bold',
-    marginLeft: 25
   },
   imageContainer: {
     width: 100,

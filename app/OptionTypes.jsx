@@ -3,33 +3,33 @@ import React from 'react'
 import {Colors} from '../constants/Colors';
 import { useRouter } from 'expo-router';
 
-const Options = () => {
+const OptionTypes = () => {
   const router = useRouter();
-
+  
   const optionCards = [
-    {id: '1', name: 'Sports', source: require('../assets/images/options/sports.png')},
-    {id: '2', name: 'Movie Watching', source: require('../assets/images/options/movie.png')},
-    {id: '3', name: 'Music', source: require('../assets/images/options/music.png')},
-    {id: '4', name: 'Realxing', source: require('../assets/images/options/relax.png')},
-    {id: '5', name: 'Gaming', source: require('../assets/images/options/gaming.png')},
-    {id: '6', name: 'Other', source: require('../assets/images/options/other.png')},
+    {id: '1', name: 'Cricket', source: require('../assets/images/optionTypes/sports/cricket.png')},
+    {id: '2', name: 'Football', source: require('../assets/images/optionTypes/sports/football.png')},
+    {id: '3', name: 'Badminton', source: require('../assets/images/optionTypes/sports/badminton.png')},
+    {id: '4', name: 'Basketball', source: require('../assets/images/optionTypes/sports/basketball.png')},
+    {id: '5', name: 'Carrom', source: require('../assets/images/optionTypes/sports/carrom.png')},
+    {id: '6', name: 'Chess', source: require('../assets/images/optionTypes/sports/chess.png')},
   ];
 
   const handlePress = (name) => {
-    router.push('/OptionTypes')
+    router.push('/Places');
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.subHeading}>
-        <Text style={styles.subHeadingTxt}>Options to proceed</Text>
+        <Text style={styles.subHeadingTxt}>Options Types</Text>
       </View>
       
       <View style={{flex: 1}}>
         <FlatList data={optionCards}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({item}) => (
-          <TouchableOpacity style={styles.optionCard} onPress={() => handlePress(item.name)}>
+          <TouchableOpacity style={styles.card} onPress={() => handlePress(item.name)}>
             <View style={styles.imageContainer}>
               <Image source={item.source} style={styles.image}/>
             </View>
@@ -43,7 +43,7 @@ const Options = () => {
   )
 }
 
-export default Options
+export default OptionTypes
 
 const styles = StyleSheet.create({
   container: {
@@ -59,14 +59,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
   },
-  optionCard: {
+  card: {
     flexDirection: 'row',
     height: 100,
     marginHorizontal: 20,
     marginVertical: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#0172B2',
     borderRadius: 10,
-    elevation: 5
+    elevation: 5,
   },
   cardTitle: {
     flex: 1,

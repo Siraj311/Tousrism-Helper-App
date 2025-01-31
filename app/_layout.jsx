@@ -33,11 +33,30 @@ export default function RootLayout() {
         headerShadowVisible: false,
       }}>
         <Stack.Screen name="index" options={{ headerTitle: 'Tourism Helper Guide',
+        headerTitleAlign: 'center',
         headerTitleStyle: {
           fontSize: 20,
           fontWeight: '600',
         }, }} />
         <Stack.Screen name="Options" options={{ headerTitle: 'Tourism Helper Guide',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          // backgroundColor: '#001645',
+          
+        },
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontWeight: '600',
+        }, }} />
+        <Stack.Screen name="OptionTypes" options={{ headerTitle: 'Tourism Helper Guide',
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontWeight: '600',
+        }, }} />
+        <Stack.Screen name="Places" options={{ headerTitle: 'Tourism Helper Guide',
+        headerTitleAlign: 'center',
         headerTitleStyle: {
           fontSize: 20,
           fontWeight: '600',

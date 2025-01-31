@@ -6,6 +6,12 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
+// Color Palette
+const first = '#F8FAFC';
+const second = '#D9EAFD';
+const third = '#BCCCDC';
+const fourth = '#9AA6B2';
+
 export const Colors = {
   light: {
     text: '#11181C',
@@ -23,4 +29,8 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
   },
+  first: '#F8FAFC',
+  second: '#D9EAFD',
+  third: '#BCCCDC',
+  fourth: '#9AA6B2'
 };

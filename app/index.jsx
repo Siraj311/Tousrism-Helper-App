@@ -1,6 +1,7 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React from 'react'
 import { useRouter } from 'expo-router'
+import {Colors} from '../constants/Colors';
 
 const index = () => {
   const router = useRouter();
@@ -13,18 +14,30 @@ const index = () => {
 
       <View style={styles.weatherContainer}>
         <TouchableOpacity style={styles.weatherCard} onPress={() => router.push({pathname: './Options'})}>
-          <Image source={require('../assets/images/weatherDay/SunnyDay.jpg')} style={styles.weatherImage}/>
-          <Text style={styles.cardTxt}>Sunny Day</Text>
+          <View style={styles.imageConatiner}>
+            <Image source={require('../assets/images/weatherDay/SunnyDay.jpg')} style={styles.weatherImage}/>
+          </View>
+          <View style={styles.weatherTitle}>
+            <Text style={styles.cardTxt}>Sunny Day</Text>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.weatherCard}>
-          <Image source={require('../assets/images/weatherDay/RainyDay.jpg')} style={styles.weatherImage}/>
-          <Text style={styles.cardTxt}>Rainy Day</Text>
+          <View style={styles.imageConatiner}>
+            <Image source={require('../assets/images/weatherDay/RainyDay.jpg')} style={styles.weatherImage}/>
+          </View>
+          <View style={styles.weatherTitle}>
+            <Text style={styles.cardTxt}>Rainy Day</Text>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.weatherCard}>
-          <Image source={require('../assets/images/weatherDay/RainyDay.jpg')} style={styles.weatherImage}/>
-          <Text style={styles.cardTxt}>Hazard Day</Text>
+          <View style={styles.imageConatiner}>
+            <Image source={require('../assets/images/weatherDay/RainyDay.jpg')} style={styles.weatherImage}/>
+          </View>
+          <View style={styles.weatherTitle}>
+            <Text style={styles.cardTxt}>Hazard Day</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -37,7 +50,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: '#68dbf2'
+    backgroundColor: '#fff'
   },
   header: {
     marginTop: 50,
@@ -57,15 +70,18 @@ const styles = StyleSheet.create({
   },
   weatherContainer: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    alignItems: 'center'
+    // justifyContent: 'center',
   },
   weatherCard: {
-    height: 120, 
-    width: 140,
+    width: '100%',
     borderRadius: 10,
-    margin: 20
+    margin: 20,
+    marginTop: 30
+  },
+  imageConatiner: {
+    height: 150, 
+    width: '100%',
   },
   weatherImage: {
     height: '100%',
