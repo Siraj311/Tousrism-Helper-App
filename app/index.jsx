@@ -1,10 +1,35 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import {Colors} from '../constants/Colors';
+import { db } from '../firebaseConfig'
+import { collection, getDocs } from "firebase/firestore";
 
 const index = () => {
+  const [dayTypes, setDayTypes] = useState([]);
   const router = useRouter();
+
+
+  useEffect(() => {
+    const fetchDayTypes = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "dayTypes"));
+        const typesList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setDayTypes(typesList);
+        console.log("Day Types:", typesList);
+      } catch (error) {
+        console.error("Error fetching day types:", error);
+      }
+    };
+
+    fetchDayTypes();
+    console.log(dayTypes);
+    
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -13,7 +38,7 @@ const index = () => {
       </View>
 
       <View style={styles.weatherContainer}>
-        <TouchableOpacity style={styles.weatherCard} onPress={() => router.push({pathname: './Options'})}>
+        <TouchableOpacity style={styles.weatherCard} onPress={() => router.push({pathname: './Options', params: {dayTypeId: 'SunnyDay'}})}>
           <View style={styles.imageConatiner}>
             <Image source={require('../assets/images/weatherDay/SunnyDay.jpg')} style={styles.weatherImage}/>
           </View>
@@ -22,7 +47,7 @@ const index = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.weatherCard}>
+        <TouchableOpacity style={styles.weatherCard} onPress={() => router.push({pathname: './Options', params: {dayTypeId: 'RainyDay'}})}>
           <View style={styles.imageConatiner}>
             <Image source={require('../assets/images/weatherDay/RainyDay.jpg')} style={styles.weatherImage}/>
           </View>
@@ -31,9 +56,9 @@ const index = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.weatherCard}>
+        <TouchableOpacity style={styles.weatherCard} onPress={() => router.push({pathname: './Options', params: {dayTypeId: 'HazardDay'}})}>
           <View style={styles.imageConatiner}>
-            <Image source={require('../assets/images/weatherDay/RainyDay.jpg')} style={styles.weatherImage}/>
+            <Image source={require('../assets/images/weatherDay/hazard5.jpg')} style={styles.weatherImage}/>
           </View>
           <View style={styles.weatherTitle}>
             <Text style={styles.cardTxt}>Hazard Day</Text>

@@ -1,15 +1,49 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Colors} from '../constants/Colors';
+import { db } from "../firebaseConfig";
+import { collection, getDocs, doc } from "firebase/firestore";
+import { useLocalSearchParams } from 'expo-router';
 
 const Places = () => {
+  const { dayTypeId, categoryId, subCategoryId } = useLocalSearchParams();
+  const [places, setPlaces] = useState([]);
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        if (!dayTypeId || !categoryId || !subCategoryId) return;
+  
+        // ✅ First, get the parent document reference
+        const subCategoryDocRef = doc(db, "dayTypes", dayTypeId, "categories", categoryId, "SubCategories", subCategoryId);
+  
+        // ✅ Then, get the subcollection reference
+        const placesRef = collection(subCategoryDocRef, "places");
+  
+        // ✅ Fetch data from the subcollection
+        const querySnapshot = await getDocs(placesRef);
+        const placesList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+  
+        setPlaces(placesList);
+        console.log("Places:", placesList);
+      } catch (error) {
+        console.error("Error fetching places:", error);
+      }
+    };
+  
+    fetchPlaces();
+  }, [dayTypeId, categoryId, subCategoryId]);
+
   const optionCards = [
-    {id: '1', name: 'Cricket', state: 'OPEN', source: require('../assets/images/optionTypes/sports/cricket.png')},
-    {id: '2', name: 'Football', state: 'CLOSE', source: require('../assets/images/optionTypes/sports/football.png')},
-    {id: '3', name: 'Badminton', state: 'OPEN', source: require('../assets/images/optionTypes/sports/badminton.png')},
-    {id: '4', name: 'Basketball', state: 'CLOSE', source: require('../assets/images/optionTypes/sports/basketball.png')},
-    {id: '5', name: 'Carrom', state: 'OPEN', source: require('../assets/images/optionTypes/sports/carrom.png')},
-    {id: '6', name: 'Chess', state: 'OPEN', source: require('../assets/images/optionTypes/sports/chess.png')},
+    {id: '1', name: 'Cricket Club', state: 'OPEN', source: require('../assets/images/places/cricketPlace.jpg')},
+    {id: '2', name: 'Magic Indoor', state: 'CLOSE', source: require('../assets/images/places/cricketPlace.jpg')},
+    {id: '3', name: 'Outdoor', state: 'OPEN', source: require('../assets/images/places/cricketPlace.jpg')},
+    {id: '4', name: 'Best Play', state: 'CLOSE', source: require('../assets/images/places/cricketPlace.jpg')},
+    {id: '5', name: 'SL Club', state: 'OPEN', source: require('../assets/images/places/cricketPlace.jpg')},
+    {id: '6', name: 'Sport Club', state: 'OPEN', source: require('../assets/images/places/cricketPlace.jpg')},
   ];
 
   return (
@@ -19,12 +53,12 @@ const Places = () => {
       </View>
 
       <View style={{flex: 1}}>
-        <FlatList data={optionCards}
+        <FlatList data={places}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({item}) => (
           <TouchableOpacity style={styles.card}>
             <View style={styles.imageContainer}>
-              <Image source={item.source} style={styles.image}/>
+              <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
             </View>
             <View style={styles.cardTitle}>
               <Text style={styles.cardTitleTxt}>{item.name}</Text>
@@ -85,6 +119,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    borderRadius: 10
   },
 })

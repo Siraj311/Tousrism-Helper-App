@@ -1,10 +1,33 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Colors} from '../constants/Colors';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { db } from "../firebaseConfig";
+import { collection, getDocs, doc } from "firebase/firestore";
 
 const Options = () => {
   const router = useRouter();
+  const { dayTypeId } = useLocalSearchParams();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesRef = collection(doc(db, "dayTypes", dayTypeId), "categories");
+        const querySnapshot = await getDocs(categoriesRef);
+        const categoriesList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCategories(categoriesList);
+        console.log("Categories:", categoriesList);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+  
+    if (dayTypeId) fetchCategories();
+  }, [dayTypeId]);
 
   const optionCards = [
     {id: '1', name: 'Sports', source: require('../assets/images/options/sports.png')},
@@ -15,8 +38,8 @@ const Options = () => {
     {id: '6', name: 'Other', source: require('../assets/images/options/other.png')},
   ];
 
-  const handlePress = (name) => {
-    router.push('/OptionTypes')
+  const handlePress = (catergoryId) => {
+    router.push({pathname: './OptionTypes', params: {dayTypeId: dayTypeId, categoryId: catergoryId}})
   }
 
   return (
@@ -26,12 +49,12 @@ const Options = () => {
       </View>
       
       <View style={{flex: 1}}>
-        <FlatList data={optionCards}
+        <FlatList data={categories}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({item}) => (
-          <TouchableOpacity style={styles.optionCard} onPress={() => handlePress(item.name)}>
+          <TouchableOpacity style={styles.optionCard} onPress={() => handlePress(item.id)}>
             <View style={styles.imageContainer}>
-              <Image source={item.source} style={styles.image}/>
+              <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
             </View>
             <View style={styles.cardTitle}>
               <Text style={styles.cardTitleTxt}>{item.name}</Text>
@@ -83,6 +106,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    borderRadius: 10
   },
 })

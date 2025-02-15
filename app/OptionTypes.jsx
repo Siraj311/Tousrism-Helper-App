@@ -1,10 +1,42 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Colors} from '../constants/Colors';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { db } from "../firebaseConfig";
+import { collection, getDocs, doc } from "firebase/firestore";
 
 const OptionTypes = () => {
   const router = useRouter();
+  const { dayTypeId, categoryId } = useLocalSearchParams();
+  const [subCategories, setSubCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        if (!dayTypeId || !categoryId) return;
+  
+        // ✅ First, get the parent document reference
+        const categoryDocRef = doc(db, "dayTypes", dayTypeId, "categories", categoryId);
+  
+        // ✅ Then, get the subcollection reference
+        const subCategoriesRef = collection(categoryDocRef, "SubCategories");
+  
+        // ✅ Fetch data from the subcollection
+        const querySnapshot = await getDocs(subCategoriesRef);
+        const subCategoriesList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+  
+        setSubCategories(subCategoriesList);
+        console.log("SubCategories:", subCategoriesList);
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
+      }
+    };
+  
+    fetchSubCategories();
+  }, [dayTypeId, categoryId]);
   
   const optionCards = [
     {id: '1', name: 'Cricket', source: require('../assets/images/optionTypes/sports/cricket.png')},
@@ -15,8 +47,8 @@ const OptionTypes = () => {
     {id: '6', name: 'Chess', source: require('../assets/images/optionTypes/sports/chess.png')},
   ];
 
-  const handlePress = (name) => {
-    router.push('/Places');
+  const handlePress = (subCategoryId) => {
+    router.push({pathname: './Places', params: {dayTypeId: dayTypeId, categoryId: categoryId, subCategoryId: subCategoryId}});
   }
 
   return (
@@ -26,12 +58,12 @@ const OptionTypes = () => {
       </View>
       
       <View style={{flex: 1}}>
-        <FlatList data={optionCards}
+        <FlatList data={subCategories}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({item}) => (
-          <TouchableOpacity style={styles.card} onPress={() => handlePress(item.name)}>
+          <TouchableOpacity style={styles.card} onPress={() => handlePress(item.id)}>
             <View style={styles.imageContainer}>
-              <Image source={item.source} style={styles.image}/>
+              <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
             </View>
             <View style={styles.cardTitle}>
               <Text style={styles.cardTitleTxt}>{item.name}</Text>
@@ -64,7 +96,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginHorizontal: 20,
     marginVertical: 10,
-    backgroundColor: '#0172B2',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     elevation: 5,
   },
@@ -83,6 +115,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    borderRadius: 10
   },
 })
