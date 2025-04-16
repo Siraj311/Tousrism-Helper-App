@@ -19,7 +19,7 @@ const OptionTypes = () => {
         const categoryDocRef = doc(db, "dayTypes", dayTypeId, "categories", categoryId);
   
         // ✅ Then, get the subcollection reference
-        const subCategoriesRef = collection(categoryDocRef, "SubCategories");
+        const subCategoriesRef = collection(categoryDocRef, "subCategories");
   
         // ✅ Fetch data from the subcollection
         const querySnapshot = await getDocs(subCategoriesRef);
