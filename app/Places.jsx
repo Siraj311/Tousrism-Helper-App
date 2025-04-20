@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image, Modal } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image, Modal, Linking, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import {Colors} from '../constants/Colors';
 import { db } from "../firebaseConfig";
@@ -6,21 +6,24 @@ import { collection, getDocs, doc } from "firebase/firestore";
 import { useLocalSearchParams } from 'expo-router';
 
 const Places = () => {
-  const { dayTypeId, categoryId, subCategoryId } = useLocalSearchParams();
+  const { dayTypeId, categoryId } = useLocalSearchParams();
   const [places, setPlaces] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        if (!dayTypeId || !categoryId || !subCategoryId) return;
+        if (!dayTypeId || !categoryId ) return;
+
+        setLoading(true);
   
         // ✅ First, get the parent document reference
-        const subCategoryDocRef = doc(db, "dayTypes", dayTypeId, "categories", categoryId, "subCategories", subCategoryId);
+        const subCategoryDocRef = doc(db, "dayTypes", dayTypeId, "categories", categoryId);
   
         // ✅ Then, get the subcollection reference
-        const placesRef = collection(subCategoryDocRef, "places");
+        const placesRef = collection(subCategoryDocRef, "Places");
   
         // ✅ Fetch data from the subcollection
         const querySnapshot = await getDocs(placesRef);
@@ -33,11 +36,13 @@ const Places = () => {
         console.log("Places:", placesList);
       } catch (error) {
         console.error("Error fetching places:", error);
+      } finally {
+        setLoading(false);
       }
     };
   
     fetchPlaces();
-  }, [dayTypeId, categoryId, subCategoryId]);
+  }, [dayTypeId, categoryId]);
 
   const isPlaceOpen = (openTime, closeTime) => {
     if (!openTime || !closeTime) return false;
@@ -66,24 +71,28 @@ const Places = () => {
       </View>
 
       <View style={{flex: 1}}>
-        <FlatList data={places}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.card} onPress={() => {
-            setSelectedItem(item);
-            setModalVisible(true);
-          }}>
-            <View style={styles.imageContainer}>
-              <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
-            </View>
-            <View style={styles.cardTitle}>
-              <Text style={styles.cardTitleTxt}>{item.name}</Text>
-              <Text style={[styles.cardState, {color: isPlaceOpen(item.openTime, item.closeTime) ? 'green' : 'red'}]}>
-                {isPlaceOpen(item.openTime, item.closeTime) ? 'OPEN' : 'CLOSED'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}/>
+        {loading ? (
+          <ActivityIndicator size="large" color="#007AFF" />
+        ) : (
+          <FlatList data={places}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({item}) => (
+            <TouchableOpacity style={styles.card} onPress={() => {
+              setSelectedItem(item);
+              setModalVisible(true);
+            }}>
+              <View style={styles.imageContainer}>
+                <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
+              </View>
+              <View style={styles.cardTitle}>
+                <Text style={styles.cardTitleTxt}>{item.name}</Text>
+                <Text style={[styles.cardState, {color: isPlaceOpen(item.openTime, item.closeTime) ? 'green' : 'red'}]}>
+                  {isPlaceOpen(item.openTime, item.closeTime) ? 'OPEN' : 'CLOSED'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}/>
+        )}
       </View>
 
       {selectedItem && (
@@ -103,6 +112,13 @@ const Places = () => {
 
               <Text>🗺️ Address: {selectedItem.address}</Text>
               <Text style={{ marginTop: 10 }}>📞 Contact: {selectedItem.contactNumber}</Text>
+
+              <Text style={{ marginTop: 10 }}>
+              🌐 Website: 
+              <Text style={{ color: '#007AFF' }} onPress={() => Linking.openURL(selectedItem.visitPage)}>
+                {' '}{selectedItem.visitPage}
+              </Text>
+            </Text>
 
               <View style={styles.timeRow}>
                 <Text>⏰ Open: {selectedItem.openTime}</Text>
@@ -145,15 +161,16 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   cardTitle: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     flex: 1,
     paddingLeft: 25,
     paddingRight: 15,
     // backgroundColor: 'green',
     // flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    // flexDirection: 'row'
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // flexDirection: 'row',
+    gap: 10
   },
   cardState: {
     fontWeight:"bold"

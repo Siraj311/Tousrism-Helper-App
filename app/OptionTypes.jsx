@@ -38,15 +38,6 @@ const OptionTypes = () => {
     fetchSubCategories();
   }, [dayTypeId, categoryId]);
   
-  const optionCards = [
-    {id: '1', name: 'Cricket', source: require('../assets/images/optionTypes/sports/cricket.png')},
-    {id: '2', name: 'Football', source: require('../assets/images/optionTypes/sports/football.png')},
-    {id: '3', name: 'Badminton', source: require('../assets/images/optionTypes/sports/badminton.png')},
-    {id: '4', name: 'Basketball', source: require('../assets/images/optionTypes/sports/basketball.png')},
-    {id: '5', name: 'Carrom', source: require('../assets/images/optionTypes/sports/carrom.png')},
-    {id: '6', name: 'Chess', source: require('../assets/images/optionTypes/sports/chess.png')},
-  ];
-
   const handlePress = (subCategoryId) => {
     router.push({pathname: './Places', params: {dayTypeId: dayTypeId, categoryId: categoryId, subCategoryId: subCategoryId}});
   }

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import {Colors} from '../constants/Colors';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -9,10 +9,13 @@ const Options = () => {
   const router = useRouter();
   const { dayTypeId } = useLocalSearchParams();
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoading(true)
+
         const categoriesRef = collection(doc(db, "dayTypes", dayTypeId), "categories");
         const querySnapshot = await getDocs(categoriesRef);
         const categoriesList = querySnapshot.docs.map((doc) => ({
@@ -23,23 +26,16 @@ const Options = () => {
         console.log("Categories:", categoriesList);
       } catch (error) {
         console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
       }
     };
   
     if (dayTypeId) fetchCategories();
   }, [dayTypeId]);
 
-  const optionCards = [
-    {id: '1', name: 'Sports', source: require('../assets/images/options/sports.png')},
-    {id: '2', name: 'Movie Watching', source: require('../assets/images/options/movie.png')},
-    {id: '3', name: 'Music', source: require('../assets/images/options/music.png')},
-    {id: '4', name: 'Realxing', source: require('../assets/images/options/relax.png')},
-    {id: '5', name: 'Gaming', source: require('../assets/images/options/gaming.png')},
-    {id: '6', name: 'Other', source: require('../assets/images/options/other.png')},
-  ];
-
   const handlePress = (catergoryId) => {
-    router.push({pathname: './OptionTypes', params: {dayTypeId: dayTypeId, categoryId: catergoryId}})
+    router.push({pathname: './Places', params: {dayTypeId: dayTypeId, categoryId: catergoryId}})
   }
 
   return (
@@ -49,18 +45,22 @@ const Options = () => {
       </View>
       
       <View style={{flex: 1}}>
-        <FlatList data={categories}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.optionCard} onPress={() => handlePress(item.id)}>
-            <View style={styles.imageContainer}>
-              <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
-            </View>
-            <View style={styles.cardTitle}>
-              <Text style={styles.cardTitleTxt}>{item.name}</Text>
-            </View>
-          </TouchableOpacity>
-        )}/>
+        {loading ? (
+          <ActivityIndicator size="large" color="#007AFF" />
+        ) : (
+          <FlatList data={categories}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({item}) => (
+            <TouchableOpacity style={styles.optionCard} onPress={() => handlePress(item.id)}>
+              <View style={styles.imageContainer}>
+                <Image source={{uri: `${item.imageURL}`}} style={styles.image}/>
+              </View>
+              <View style={styles.cardTitle}>
+                <Text style={styles.cardTitleTxt}>{item.name}</Text>
+              </View>
+            </TouchableOpacity>
+          )}/>
+        )}
       </View>
     </View>
   )
